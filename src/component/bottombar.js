@@ -74,7 +74,8 @@ export default class Bottombar {
   constructor(addFunc = () => {},
     swapFunc = () => {},
     deleteFunc = () => {},
-    updateFunc = () => {}) {
+    updateFunc = () => {}, options = {}) {
+    this.options = {showAdd: true, ...options}
     this.swapFunc = swapFunc;
     this.updateFunc = updateFunc;
     this.dataNames = [];
@@ -86,16 +87,17 @@ export default class Bottombar {
     });
     this.contextMenu = new ContextMenu();
     this.contextMenu.itemClick = deleteFunc;
+    const li = h('li', '')
+    if(this.options.showAdd) {
+      li.child(new Icon('add').on('click', () => {
+        addFunc();
+      }));
+    }
+    li.child(h('span', '').child(this.moreEl));
+
     this.el = h('div', `${cssPrefix}-bottombar`).children(
       this.contextMenu.el,
-      this.menuEl = h('ul', `${cssPrefix}-menu`).child(
-        h('li', '').children(
-          new Icon('add').on('click', () => {
-            addFunc();
-          }),
-          h('span', '').child(this.moreEl),
-        ),
-      ),
+      this.menuEl = h('ul', `${cssPrefix}-menu`).child(li),
     );
   }
 
